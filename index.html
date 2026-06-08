@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Budget Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --surface: #181818;
+    --surface2: #222222;
+    --border: #2a2a2a;
+    --text: #e8e4dc;
+    --muted: #666;
+    --accent: #c8b89a;
+    --green: #4caf7d;
+    --amber: #e8a838;
+    --red: #e85438;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    padding: 24px 16px 48px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  header h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: clamp(1.6rem, 5vw, 2.4rem);
+    letter-spacing: -0.02em;
+    color: var(--accent);
+  }
+
+  header p {
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 4px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* DIAL */
+  .dial-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 0 16px;
+  }
+
+  .dial-svg-wrap {
+    position: relative;
+    width: 260px;
+    height: 155px;
+    margin-bottom: 12px;
+  }
+
+  #dialSvg {
+    width: 260px;
+    height: 155px;
+    overflow: visible;
+  }
+
+  .dial-center-text {
+    position: absolute;
+    top: 54%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+
+  .dial-amount {
+    font-family: 'Fraunces', serif;
+    font-size: 2.1rem;
+    font-weight: 600;
+    line-height: 1;
+    transition: color 0.6s ease;
+  }
+
+  .dial-label {
+    font-size: 0.62rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .daily-budget {
+    text-align: center;
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  .daily-budget span {
+    font-family: 'Fraunces', serif;
+    font-size: 1.1rem;
+    color: var(--text);
+    font-weight: 300;
+  }
+
+  .days-left {
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-top: 4px;
+    text-align: center;
+  }
+
+  /* SETUP BALANCE */
+  .setup-section {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 0;
+  }
+
+  .setup-section input {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.9rem;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .setup-section input:focus { border-color: var(--accent); }
+
+  button {
+    background: var(--accent);
+    color: #0f0f0f;
+    border: none;
+    border-radius: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    white-space: nowrap;
+  }
+
+  button:hover { opacity: 0.85; }
+  button:active { transform: scale(0.97); }
+
+  /* EXPENSE FORM */
+  .expense-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .expense-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .expense-form input {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+
+  .expense-form input:focus { border-color: var(--accent); }
+
+  .expense-form input::placeholder { color: var(--muted); }
+
+  .expense-form button { width: 100%; margin-top: 2px; }
+
+  /* EXPENSES LIST */
+  .section-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .expense-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 280px;
+    overflow-y: auto;
+  }
+
+  .expense-list::-webkit-scrollbar { width: 4px; }
+  .expense-list::-webkit-scrollbar-track { background: transparent; }
+  .expense-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .expense-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    background: var(--surface2);
+    border-radius: 8px;
+    animation: slideIn 0.25s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .expense-item-desc {
+    font-size: 0.8rem;
+    color: var(--text);
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 12px;
+  }
+
+  .expense-item-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .expense-item-amount {
+    font-size: 0.85rem;
+    color: var(--red);
+  }
+
+  .expense-item-date {
+    font-size: 0.62rem;
+    color: var(--muted);
+  }
+
+  .del-btn {
+    background: none;
+    color: var(--muted);
+    font-size: 0.85rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+  }
+
+  .del-btn:hover {
+    border-color: var(--border);
+    color: var(--red);
+    opacity: 1;
+  }
+
+  .empty-state {
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-align: center;
+    padding: 16px 0;
+  }
+
+  /* RESET NOTICE */
+  .reset-notice {
+    background: #1a1200;
+    border: 1px solid #3a2800;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 0.75rem;
+    color: var(--amber);
+    margin-bottom: 16px;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+
+  /* CARD HEADER with total spent */
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .total-spent {
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-align: right;
+  }
+
+  .total-spent span {
+    display: block;
+    font-family: 'Fraunces', serif;
+    font-size: 1rem;
+    color: var(--text);
+    font-weight: 300;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Budget Tracker</h1>
+  <p id="monthLabel"></p>
+</header>
+
+<div id="resetNotice" class="reset-notice" style="display:none">
+  ⚠ New month detected. Please set your starting balance below.
+</div>
+
+<!-- DIAL CARD -->
+<div class="card">
+  <div class="dial-wrap">
+    <div class="dial-svg-wrap">
+      <svg id="dialSvg" viewBox="0 0 260 155">
+        <!-- Background arc -->
+        <path id="bgArc" d="" fill="none" stroke="#2a2a2a" stroke-width="14" stroke-linecap="round"/>
+        <!-- Foreground arc -->
+        <path id="fgArc" d="" fill="none" stroke-width="14" stroke-linecap="round"
+              style="transition: stroke-dashoffset 0.7s cubic-bezier(.4,0,.2,1), stroke 0.6s ease;"/>
+      </svg>
+      <div class="dial-center-text">
+        <div class="dial-amount" id="remainingAmt">€0</div>
+        <div class="dial-label">remaining</div>
+      </div>
+    </div>
+    <div class="daily-budget">
+      <span id="dailyAmt">€0</span> / day remaining
+    </div>
+    <div class="days-left" id="daysLeft"></div>
+  </div>
+
+  <!-- SET BALANCE -->
+  <div class="setup-section">
+    <input type="number" id="balanceInput" placeholder="Starting balance (€)" min="0" step="0.01">
+    <button onclick="setBalance()">SET</button>
+  </div>
+</div>
+
+<!-- ADD EXPENSE CARD -->
+<div class="card">
+  <div class="card-header">
+    <div class="section-label" style="margin-bottom:0">Add Expense</div>
+    <div class="total-spent">
+      Total spent
+      <span id="totalSpent">€0.00</span>
+    </div>
+  </div>
+  <div class="expense-form">
+    <div class="expense-row">
+      <input type="text" id="descInput" placeholder="Description">
+    </div>
+    <div class="expense-row">
+      <input type="number" id="amountInput" placeholder="Amount (€)" min="0" step="0.01">
+    </div>
+    <button onclick="addExpense()">ADD EXPENSE</button>
+  </div>
+</div>
+
+<!-- EXPENSES LIST CARD -->
+<div class="card">
+  <div class="section-label">This Month's Expenses</div>
+  <div class="expense-list" id="expenseList">
+    <div class="empty-state">No expenses yet</div>
+  </div>
+</div>
+
+<script>
+  const STORAGE_KEY = 'budgetTracker_v1';
+
+  function getState() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return { month: null, balance: 0, expenses: [] };
+    return JSON.parse(raw);
+  }
+
+  function saveState(state) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function currentMonthKey() {
+    const d = new Date();
+    return `${d.getFullYear()}-${d.getMonth()}`;
+  }
+
+  function daysLeftInMonth() {
+    const now = new Date();
+    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    return lastDay - now.getDate() + 1; // include today
+  }
+
+  function formatEuro(n) {
+    return '€' + Math.abs(n).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  // Semicircle dial
+  function buildArcPath(cx, cy, r, startDeg, endDeg) {
+    const toRad = d => (d * Math.PI) / 180;
+    const x1 = cx + r * Math.cos(toRad(startDeg));
+    const y1 = cy + r * Math.sin(toRad(startDeg));
+    const x2 = cx + r * Math.cos(toRad(endDeg));
+    const y2 = cy + r * Math.sin(toRad(endDeg));
+    const large = endDeg - startDeg > 180 ? 1 : 0;
+    return `M ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2}`;
+  }
+
+  function lerpColor(a, b, t) {
+    const ah = parseInt(a.slice(1), 16);
+    const bh = parseInt(b.slice(1), 16);
+    const ar = (ah >> 16) & 0xff, ag = (ah >> 8) & 0xff, ab = ah & 0xff;
+    const br = (bh >> 16) & 0xff, bg = (bh >> 8) & 0xff, bb = bh & 0xff;
+    const rr = Math.round(ar + (br - ar) * t);
+    const rg = Math.round(ag + (bg - ag) * t);
+    const rb = Math.round(ab + (bb - ab) * t);
+    return `rgb(${rr},${rg},${rb})`;
+  }
+
+  function dialColor(pct) {
+    // green → amber → red as spending increases
+    if (pct < 0.5) {
+      const t = pct * 2;
+      return lerpColor('#4caf7d', '#e8a838', t); // green to amber
+    } else {
+      const t = (pct - 0.5) * 2;
+      return lerpColor('#e8a838', '#e85438', t); // amber to red
+    }
+  }
+
+  function updateDial(totalSpent, balance) {
+    const cx = 130, cy = 130, r = 105;
+    const startDeg = 180, endDeg = 360;
+
+    document.getElementById('bgArc').setAttribute('d', buildArcPath(cx, cy, r, startDeg, endDeg));
+
+    // pct = how much has been spent (0 = nothing spent, 1 = all spent)
+    const pct = balance <= 0 ? 0 : Math.max(0, Math.min(1, totalSpent / balance));
+    const sweep = pct * 180;
+    const fgEnd = startDeg + sweep;
+
+    const fgArc = document.getElementById('fgArc');
+    if (pct > 0) {
+      fgArc.setAttribute('d', buildArcPath(cx, cy, r, startDeg, fgEnd));
+      fgArc.setAttribute('stroke', dialColor(pct));
+    } else {
+      fgArc.setAttribute('d', '');
+    }
+
+    const remaining = balance - totalSpent;
+    const amtEl = document.getElementById('remainingAmt');
+    amtEl.textContent = formatEuro(remaining);
+    amtEl.style.color = pct > 0 ? dialColor(pct) : 'var(--green)';
+  }
+
+  function render() {
+    const state = getState();
+    const monthKey = currentMonthKey();
+
+    // Check for new month
+    if (state.month && state.month !== monthKey) {
+      // Reset for new month
+      state.month = monthKey;
+      state.balance = 0;
+      state.expenses = [];
+      saveState(state);
+      document.getElementById('resetNotice').style.display = 'block';
+    } else if (!state.month) {
+      state.month = monthKey;
+      saveState(state);
+    }
+
+    const now = new Date();
+    const monthName = now.toLocaleString('default', { month: 'long', year: 'numeric' });
+    document.getElementById('monthLabel').textContent = monthName;
+
+    const totalSpent = state.expenses.reduce((s, e) => s + e.amount, 0);
+    const remaining = state.balance - totalSpent;
+    const days = daysLeftInMonth();
+    const daily = days > 0 ? remaining / days : 0;
+
+    updateDial(totalSpent, state.balance);
+
+    document.getElementById('dailyAmt').textContent = formatEuro(Math.max(0, daily));
+    document.getElementById('daysLeft').textContent = `${days} day${days !== 1 ? 's' : ''} left in month`;
+    document.getElementById('totalSpent').textContent = formatEuro(totalSpent);
+    document.getElementById('balanceInput').placeholder = state.balance > 0
+      ? `Balance: ${formatEuro(state.balance)}`
+      : 'Starting balance (€)';
+
+    // Render expenses (newest first)
+    const list = document.getElementById('expenseList');
+    if (state.expenses.length === 0) {
+      list.innerHTML = '<div class="empty-state">No expenses yet</div>';
+    } else {
+      list.innerHTML = [...state.expenses].reverse().map((e, ri) => {
+        const i = state.expenses.length - 1 - ri;
+        return `<div class="expense-item">
+          <div class="expense-item-desc">${escHtml(e.desc || '—')}</div>
+          <div class="expense-item-right">
+            <div class="expense-item-date">${e.date}</div>
+            <div class="expense-item-amount">−${formatEuro(e.amount)}</div>
+            <button class="del-btn" onclick="deleteExpense(${i})">✕</button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+  }
+
+  function escHtml(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function setBalance() {
+    const val = parseFloat(document.getElementById('balanceInput').value);
+    if (isNaN(val) || val < 0) return;
+    const state = getState();
+    state.balance = val;
+    if (!state.month) state.month = currentMonthKey();
+    saveState(state);
+    document.getElementById('balanceInput').value = '';
+    document.getElementById('resetNotice').style.display = 'none';
+    render();
+  }
+
+  function addExpense() {
+    const desc = document.getElementById('descInput').value.trim();
+    const amount = parseFloat(document.getElementById('amountInput').value);
+    if (isNaN(amount) || amount <= 0) return;
+
+    const state = getState();
+    const now = new Date();
+    const date = `${now.getDate().toString().padStart(2,'0')}/${(now.getMonth()+1).toString().padStart(2,'0')}`;
+    state.expenses.push({ desc, amount, date });
+    saveState(state);
+
+    document.getElementById('descInput').value = '';
+    document.getElementById('amountInput').value = '';
+    render();
+  }
+
+  function deleteExpense(index) {
+    const state = getState();
+    state.expenses.splice(index, 1);
+    saveState(state);
+    render();
+  }
+
+  // Allow Enter key on inputs
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('balanceInput').addEventListener('keydown', e => { if (e.key === 'Enter') setBalance(); });
+    document.getElementById('amountInput').addEventListener('keydown', e => { if (e.key === 'Enter') addExpense(); });
+    document.getElementById('descInput').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('amountInput').focus(); });
+    render();
+  });
+</script>
+</body>
+</html>
