@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Budget Tracker</title>
-  <link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -30,11 +30,7 @@
     padding: 24px 16px 48px;
   }
 
-  header {
-    text-align: center;
-    margin-bottom: 32px;
-  }
-
+  header { text-align: center; margin-bottom: 32px; }
   header h1 {
     font-family: 'Fraunces', serif;
     font-weight: 300;
@@ -42,7 +38,6 @@
     letter-spacing: -0.02em;
     color: var(--accent);
   }
-
   header p {
     font-size: 0.7rem;
     color: var(--muted);
@@ -63,92 +58,34 @@
   }
 
   /* DIAL */
-  .dial-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 8px 0 16px;
-  }
+  .dial-wrap { display: flex; flex-direction: column; align-items: center; padding: 8px 0 16px; }
+  .dial-svg-wrap { position: relative; width: 260px; height: 155px; margin-bottom: 12px; }
+  #dialSvg { width: 260px; height: 155px; overflow: visible; }
+  .dial-center-text { position: absolute; top: 54%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+  .dial-amount { font-family: 'Fraunces', serif; font-size: 2.1rem; font-weight: 600; line-height: 1; transition: color 0.6s ease; }
+  .dial-label { font-size: 0.62rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+  .daily-budget { text-align: center; font-size: 0.72rem; color: var(--muted); letter-spacing: 0.05em; }
+  .daily-budget span { font-family: 'Fraunces', serif; font-size: 1.1rem; color: var(--text); font-weight: 300; }
+  .days-left { font-size: 0.65rem; color: var(--muted); margin-top: 4px; text-align: center; }
 
-  .dial-svg-wrap {
-    position: relative;
-    width: 260px;
-    height: 155px;
-    margin-bottom: 12px;
-  }
-
-  #dialSvg {
-    width: 260px;
-    height: 155px;
-    overflow: visible;
-  }
-
-  .dial-center-text {
-    position: absolute;
-    top: 54%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-  }
-
-  .dial-amount {
-    font-family: 'Fraunces', serif;
-    font-size: 2.1rem;
-    font-weight: 600;
-    line-height: 1;
-    transition: color 0.6s ease;
-  }
-
-  .dial-label {
-    font-size: 0.62rem;
-    color: var(--muted);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-top: 4px;
-  }
-
-  .daily-budget {
-    text-align: center;
-    font-size: 0.72rem;
-    color: var(--muted);
-    letter-spacing: 0.05em;
-  }
-
-  .daily-budget span {
-    font-family: 'Fraunces', serif;
-    font-size: 1.1rem;
-    color: var(--text);
-    font-weight: 300;
-  }
-
-  .days-left {
-    font-size: 0.65rem;
-    color: var(--muted);
-    margin-top: 4px;
-    text-align: center;
-  }
-
-  /* SETUP BALANCE */
-  .setup-section {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 0;
-  }
-
-  .setup-section input {
-    flex: 1;
+  /* INPUTS */
+  .setup-section { display: flex; gap: 8px; margin-bottom: 0; }
+  input, select {
     background: var(--surface2);
     border: 1px solid var(--border);
     border-radius: 8px;
     color: var(--text);
     font-family: 'DM Mono', monospace;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     padding: 10px 14px;
     outline: none;
     transition: border-color 0.2s;
+    width: 100%;
   }
-
-  .setup-section input:focus { border-color: var(--accent); }
+  .setup-section input { flex: 1; font-size: 0.9rem; }
+  input:focus, select:focus { border-color: var(--accent); }
+  input::placeholder { color: var(--muted); }
+  select { appearance: none; -webkit-appearance: none; }
 
   button {
     background: var(--accent);
@@ -164,162 +101,62 @@
     transition: opacity 0.2s, transform 0.1s;
     white-space: nowrap;
   }
-
   button:hover { opacity: 0.85; }
   button:active { transform: scale(0.97); }
+  button.secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
 
   /* EXPENSE FORM */
-  .expense-form {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .expense-row {
-    display: flex;
-    gap: 8px;
-  }
-
-  .expense-form input {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    font-family: 'DM Mono', monospace;
-    font-size: 0.85rem;
-    padding: 10px 14px;
-    outline: none;
-    transition: border-color 0.2s;
-    width: 100%;
-  }
-
-  .expense-form input:focus { border-color: var(--accent); }
-
-  .expense-form input::placeholder { color: var(--muted); }
-
+  .expense-form { display: flex; flex-direction: column; gap: 8px; }
+  .expense-row { display: flex; gap: 8px; }
   .expense-form button { width: 100%; margin-top: 2px; }
 
   /* EXPENSES LIST */
-  .section-label {
-    font-size: 0.65rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 12px;
-  }
-
-  .expense-list {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    max-height: 280px;
-    overflow-y: auto;
-  }
-
+  .section-label { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+  .expense-list { display: flex; flex-direction: column; gap: 6px; max-height: 280px; overflow-y: auto; }
   .expense-list::-webkit-scrollbar { width: 4px; }
   .expense-list::-webkit-scrollbar-track { background: transparent; }
   .expense-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
   .expense-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 12px;
-    background: var(--surface2);
-    border-radius: 8px;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 12px; background: var(--surface2); border-radius: 8px;
     animation: slideIn 0.25s ease;
   }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+  .expense-item-left { flex: 1; min-width: 0; margin-right: 12px; }
+  .expense-item-desc { font-size: 0.8rem; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .expense-item-cat { font-size: 0.6rem; color: var(--muted); margin-top: 2px; }
+  .expense-item-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .expense-item-amount { font-size: 0.85rem; color: var(--red); }
+  .expense-item-date { font-size: 0.62rem; color: var(--muted); }
+  .sync-dot { font-size: 0.7rem; width: 14px; text-align: center; }
+  .sync-dot.ok { color: var(--green); }
+  .sync-dot.wait { color: var(--amber); }
+  .del-btn { background: none; color: var(--muted); font-size: 0.85rem; padding: 2px 6px; border-radius: 4px; border: 1px solid transparent; }
+  .del-btn:hover { border-color: var(--border); color: var(--red); opacity: 1; }
+  .empty-state { font-size: 0.75rem; color: var(--muted); text-align: center; padding: 16px 0; }
 
-  @keyframes slideIn {
-    from { opacity: 0; transform: translateY(-6px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+  .sync-status { font-size: 0.65rem; color: var(--muted); margin-top: 12px; text-align: center; }
+  .sync-status.warn { color: var(--amber); }
 
-  .expense-item-desc {
-    font-size: 0.8rem;
-    color: var(--text);
-    flex: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-right: 12px;
+  .notice {
+    background: #1a1200; border: 1px solid #3a2800; border-radius: 8px;
+    padding: 12px 16px; font-size: 0.75rem; color: var(--amber);
+    margin-bottom: 16px; max-width: 480px; margin-left: auto; margin-right: auto; text-align: center;
   }
+  .notice button { margin-top: 10px; }
 
-  .expense-item-right {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-shrink: 0;
-  }
+  .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .total-spent { font-size: 0.7rem; color: var(--muted); text-align: right; }
+  .total-spent span { display: block; font-family: 'Fraunces', serif; font-size: 1rem; color: var(--text); font-weight: 300; }
 
-  .expense-item-amount {
-    font-size: 0.85rem;
-    color: var(--red);
-  }
-
-  .expense-item-date {
-    font-size: 0.62rem;
-    color: var(--muted);
-  }
-
-  .del-btn {
-    background: none;
-    color: var(--muted);
-    font-size: 0.85rem;
-    padding: 2px 6px;
-    border-radius: 4px;
-    border: 1px solid transparent;
-  }
-
-  .del-btn:hover {
-    border-color: var(--border);
-    color: var(--red);
-    opacity: 1;
-  }
-
-  .empty-state {
-    font-size: 0.75rem;
-    color: var(--muted);
-    text-align: center;
-    padding: 16px 0;
-  }
-
-  /* RESET NOTICE */
-  .reset-notice {
-    background: #1a1200;
-    border: 1px solid #3a2800;
-    border-radius: 8px;
-    padding: 12px 16px;
-    font-size: 0.75rem;
-    color: var(--amber);
-    margin-bottom: 16px;
-    max-width: 480px;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-  }
-
-  /* CARD HEADER with total spent */
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-  }
-
-  .total-spent {
-    font-size: 0.7rem;
-    color: var(--muted);
-    text-align: right;
-  }
-
-  .total-spent span {
-    display: block;
-    font-family: 'Fraunces', serif;
-    font-size: 1rem;
-    color: var(--text);
-    font-weight: 300;
-  }
+  /* SETTINGS */
+  .settings-toggle { display: block; margin: 8px auto 0; background: none; color: var(--muted); font-size: 0.7rem; letter-spacing: 0.08em; }
+  .settings { display: none; }
+  .settings.open { display: block; }
+  .settings label { display: block; font-size: 0.65rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin: 12px 0 6px; }
+  .settings .row { display: flex; gap: 8px; margin-top: 14px; }
+  .settings .row button { flex: 1; }
+  .settings-msg { font-size: 0.7rem; margin-top: 10px; color: var(--muted); text-align: center; min-height: 1em; }
 </style>
 </head>
 <body>
@@ -329,8 +166,13 @@
   <p id="monthLabel"></p>
 </header>
 
-<div id="resetNotice" class="reset-notice" style="display:none">
-  ⚠ New month detected. Please set your starting balance below.
+<div id="resetNotice" class="notice" style="display:none">
+  New month: your budget has been reset to <span id="resetBudget"></span>.
+</div>
+
+<div id="legacyNotice" class="notice" style="display:none">
+  <span id="legacyText"></span>
+  <br><button onclick="sendLegacy()">SEND TO SHEET</button>
 </div>
 
 <!-- DIAL CARD -->
@@ -338,26 +180,20 @@
   <div class="dial-wrap">
     <div class="dial-svg-wrap">
       <svg id="dialSvg" viewBox="0 0 260 155">
-        <!-- Background arc -->
-        <path id="bgArc" d="" fill="none" stroke="#2a2a2a" stroke-width="14" stroke-linecap="round"/>
-        <!-- Foreground arc -->
-        <path id="fgArc" d="" fill="none" stroke-width="14" stroke-linecap="round"
-              style="transition: stroke-dashoffset 0.7s cubic-bezier(.4,0,.2,1), stroke 0.6s ease;"/>
+        <path id="bgArc" d="" fill="none" stroke="#2a2a2a" stroke-width="14" stroke-linecap="round"></path>
+        <path id="fgArc" d="" fill="none" stroke-width="14" stroke-linecap="round" style="transition: stroke 0.6s ease;"></path>
       </svg>
       <div class="dial-center-text">
-        <div class="dial-amount" id="remainingAmt">€0</div>
+        <div class="dial-amount" id="remainingAmt" style="color: var(--green);">€0,00</div>
         <div class="dial-label">remaining</div>
       </div>
     </div>
-    <div class="daily-budget">
-      <span id="dailyAmt">€0</span> / day remaining
-    </div>
+    <div class="daily-budget"><span id="dailyAmt">€0,00</span> / day remaining</div>
     <div class="days-left" id="daysLeft"></div>
   </div>
 
-  <!-- SET BALANCE -->
   <div class="setup-section">
-    <input type="number" id="balanceInput" placeholder="Starting balance (€)" min="0" step="0.01">
+    <input type="number" id="balanceInput" placeholder="This month's budget (€)" min="0" step="0.01">
     <button onclick="setBalance()">SET</button>
   </div>
 </div>
@@ -366,17 +202,14 @@
 <div class="card">
   <div class="card-header">
     <div class="section-label" style="margin-bottom:0">Add Expense</div>
-    <div class="total-spent">
-      Total spent
-      <span id="totalSpent">€0.00</span>
-    </div>
+    <div class="total-spent">Total spent<span id="totalSpent">€0,00</span></div>
   </div>
   <div class="expense-form">
+    <div class="expense-row"><input type="text" id="descInput" placeholder="Description"></div>
+    <div class="expense-row"><input type="number" id="amountInput" placeholder="Amount (€)" min="0" step="0.01" inputmode="decimal"></div>
     <div class="expense-row">
-      <input type="text" id="descInput" placeholder="Description">
-    </div>
-    <div class="expense-row">
-      <input type="number" id="amountInput" placeholder="Amount (€)" min="0" step="0.01">
+      <select id="categoryInput"></select>
+      <select id="paidInput"></select>
     </div>
     <button onclick="addExpense()">ADD EXPENSE</button>
   </div>
@@ -385,155 +218,187 @@
 <!-- EXPENSES LIST CARD -->
 <div class="card">
   <div class="section-label">This Month's Expenses</div>
-  <div class="expense-list" id="expenseList">
-    <div class="empty-state">No expenses yet</div>
-  </div>
+  <div class="expense-list" id="expenseList"></div>
+  <div class="sync-status" id="syncStatus"></div>
 </div>
+
+<!-- SETTINGS -->
+<div class="card settings" id="settingsCard">
+  <div class="section-label" style="margin-bottom:0">Sheet sync settings</div>
+  <label for="urlInput">Web app link (from Apps Script)</label>
+  <input type="url" id="urlInput" placeholder="https://script.google.com/macros/s/…/exec">
+  <label for="tokenInput">Token (the phrase in the script)</label>
+  <input type="password" id="tokenInput" placeholder="Token">
+  <label for="budgetSetting">Monthly budget (€)</label>
+  <input type="number" id="budgetSetting" placeholder="2400" min="0" step="1">
+  <div class="row">
+    <button onclick="saveSettings()">SAVE</button>
+    <button class="secondary" onclick="testConnection()">TEST</button>
+  </div>
+  <div class="settings-msg" id="settingsMsg"></div>
+</div>
+<button class="settings-toggle" onclick="toggleSettings()">⚙ SHEET SYNC</button>
 
 <script>
   const STORAGE_KEY = 'budgetTracker_v1';
+  const SETTINGS_KEY = 'budgetTracker_settings';
+
+  // Must match the category names in the sheet's Setup tab.
+  const CATEGORIES = ['Home', 'Joint (Sabadell)', 'Food', 'Transport', 'Health & fitness', 'Personal care',
+    'Going out', 'Shopping', 'Presents', 'Animals', 'Holidays', 'Other', 'Savings & investments', 'Transfer'];
+  const PAID_FROM = ['Revolut', 'Credit card', 'Caja Rural', 'Cash'];
+
+  // ---------- storage ----------
+  function safeGet(key) { try { return localStorage.getItem(key); } catch (e) { return null; } }
+  function safeSet(key, val) { try { localStorage.setItem(key, val); } catch (e) {} }
 
   function getState() {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { month: null, balance: 0, expenses: [] };
-    return JSON.parse(raw);
+    const raw = safeGet(STORAGE_KEY);
+    const s = raw ? JSON.parse(raw) : { month: null, balance: 0, expenses: [] };
+    if (!s.queue) s.queue = [];       // spends waiting to be sent to the sheet
+    if (!s.expenses) s.expenses = [];
+    return s;
+  }
+  function saveState(state) { safeSet(STORAGE_KEY, JSON.stringify(state)); }
+  function getSettings() {
+    const raw = safeGet(SETTINGS_KEY);
+    return raw ? JSON.parse(raw) : { url: '', token: '', budget: 2400 };
   }
 
-  function saveState(state) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  }
-
-  function currentMonthKey() {
-    const d = new Date();
-    return `${d.getFullYear()}-${d.getMonth()}`;
-  }
-
+  // ---------- helpers ----------
+  function currentMonthKey() { const d = new Date(); return `${d.getFullYear()}-${d.getMonth()}`; }
   function daysLeftInMonth() {
     const now = new Date();
     const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-    return lastDay - now.getDate() + 1; // include today
+    return lastDay - now.getDate() + 1;
   }
-
   function formatEuro(n) {
     return '€' + Math.abs(n).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
+  function pad(n) { return n.toString().padStart(2, '0'); }
+  function makeId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+  function escHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
-  // Semicircle dial
+  // ---------- dial ----------
   function buildArcPath(cx, cy, r, startDeg, endDeg) {
     const toRad = d => (d * Math.PI) / 180;
-    const x1 = cx + r * Math.cos(toRad(startDeg));
-    const y1 = cy + r * Math.sin(toRad(startDeg));
-    const x2 = cx + r * Math.cos(toRad(endDeg));
-    const y2 = cy + r * Math.sin(toRad(endDeg));
+    const x1 = cx + r * Math.cos(toRad(startDeg)), y1 = cy + r * Math.sin(toRad(startDeg));
+    const x2 = cx + r * Math.cos(toRad(endDeg)), y2 = cy + r * Math.sin(toRad(endDeg));
     const large = endDeg - startDeg > 180 ? 1 : 0;
     return `M ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2}`;
   }
-
   function lerpColor(a, b, t) {
-    const ah = parseInt(a.slice(1), 16);
-    const bh = parseInt(b.slice(1), 16);
+    const ah = parseInt(a.slice(1), 16), bh = parseInt(b.slice(1), 16);
     const ar = (ah >> 16) & 0xff, ag = (ah >> 8) & 0xff, ab = ah & 0xff;
     const br = (bh >> 16) & 0xff, bg = (bh >> 8) & 0xff, bb = bh & 0xff;
-    const rr = Math.round(ar + (br - ar) * t);
-    const rg = Math.round(ag + (bg - ag) * t);
-    const rb = Math.round(ab + (bb - ab) * t);
-    return `rgb(${rr},${rg},${rb})`;
+    return `rgb(${Math.round(ar + (br - ar) * t)},${Math.round(ag + (bg - ag) * t)},${Math.round(ab + (bb - ab) * t)})`;
   }
-
   function dialColor(pct) {
-    // green → amber → red as spending increases
-    if (pct < 0.5) {
-      const t = pct * 2;
-      return lerpColor('#4caf7d', '#e8a838', t); // green to amber
-    } else {
-      const t = (pct - 0.5) * 2;
-      return lerpColor('#e8a838', '#e85438', t); // amber to red
-    }
+    return pct < 0.5 ? lerpColor('#4caf7d', '#e8a838', pct * 2) : lerpColor('#e8a838', '#e85438', (pct - 0.5) * 2);
   }
-
   function updateDial(totalSpent, balance) {
     const cx = 130, cy = 130, r = 105;
-    const startDeg = 180, endDeg = 360;
-
-    document.getElementById('bgArc').setAttribute('d', buildArcPath(cx, cy, r, startDeg, endDeg));
-
-    // pct = how much has been spent (0 = nothing spent, 1 = all spent)
+    document.getElementById('bgArc').setAttribute('d', buildArcPath(cx, cy, r, 180, 360));
     const pct = balance <= 0 ? 0 : Math.max(0, Math.min(1, totalSpent / balance));
-    const sweep = pct * 180;
-    const fgEnd = startDeg + sweep;
-
     const fgArc = document.getElementById('fgArc');
     if (pct > 0) {
-      fgArc.setAttribute('d', buildArcPath(cx, cy, r, startDeg, fgEnd));
+      fgArc.setAttribute('d', buildArcPath(cx, cy, r, 180, 180 + pct * 180));
       fgArc.setAttribute('stroke', dialColor(pct));
     } else {
       fgArc.setAttribute('d', '');
     }
-
-    const remaining = balance - totalSpent;
     const amtEl = document.getElementById('remainingAmt');
-    amtEl.textContent = formatEuro(remaining);
+    amtEl.textContent = (balance - totalSpent < 0 ? '−' : '') + formatEuro(balance - totalSpent);
     amtEl.style.color = pct > 0 ? dialColor(pct) : 'var(--green)';
   }
 
+  // Only real spending counts against the budget.
+  function countsAsSpending(e) { return e.category !== 'Savings & investments' && e.category !== 'Transfer'; }
+
+  // ---------- render ----------
   function render() {
     const state = getState();
+    const settings = getSettings();
     const monthKey = currentMonthKey();
 
-    // Check for new month
     if (state.month && state.month !== monthKey) {
-      // Reset for new month
+      // New month: keep anything not yet sent to the sheet, clear the display.
       state.month = monthKey;
-      state.balance = 0;
-      state.expenses = [];
+      state.balance = Number(settings.budget) || 0;
+      state.expenses = state.expenses.filter(e => !e.synced && e.id && state.queue.some(q => q.id === e.id));
       saveState(state);
+      document.getElementById('resetBudget').textContent = formatEuro(state.balance);
       document.getElementById('resetNotice').style.display = 'block';
     } else if (!state.month) {
       state.month = monthKey;
+      if (!state.balance) state.balance = Number(settings.budget) || 0;
       saveState(state);
     }
 
     const now = new Date();
-    const monthName = now.toLocaleString('default', { month: 'long', year: 'numeric' });
-    document.getElementById('monthLabel').textContent = monthName;
+    document.getElementById('monthLabel').textContent = now.toLocaleString('en-GB', { month: 'long', year: 'numeric' });
 
-    const totalSpent = state.expenses.reduce((s, e) => s + e.amount, 0);
+    const totalSpent = state.expenses.filter(countsAsSpending).reduce((s, e) => s + e.amount, 0);
     const remaining = state.balance - totalSpent;
     const days = daysLeftInMonth();
-    const daily = days > 0 ? remaining / days : 0;
-
     updateDial(totalSpent, state.balance);
-
-    document.getElementById('dailyAmt').textContent = formatEuro(Math.max(0, daily));
+    document.getElementById('dailyAmt').textContent = formatEuro(Math.max(0, days > 0 ? remaining / days : 0));
     document.getElementById('daysLeft').textContent = `${days} day${days !== 1 ? 's' : ''} left in month`;
     document.getElementById('totalSpent').textContent = formatEuro(totalSpent);
     document.getElementById('balanceInput').placeholder = state.balance > 0
-      ? `Balance: ${formatEuro(state.balance)}`
-      : 'Starting balance (€)';
+      ? `Budget: ${formatEuro(state.balance)}` : "This month's budget (€)";
 
-    // Render expenses (newest first)
     const list = document.getElementById('expenseList');
     if (state.expenses.length === 0) {
       list.innerHTML = '<div class="empty-state">No expenses yet</div>';
     } else {
       list.innerHTML = [...state.expenses].reverse().map((e, ri) => {
         const i = state.expenses.length - 1 - ri;
+        const dot = !e.id ? '' : e.synced
+          ? '<span class="sync-dot ok" title="In the sheet">✓</span>'
+          : '<span class="sync-dot wait" title="Waiting to sync">•</span>';
+        const meta = [e.category, e.paidWith].filter(Boolean).map(escHtml).join(' · ');
         return `<div class="expense-item">
-          <div class="expense-item-desc">${escHtml(e.desc || '—')}</div>
+          <div class="expense-item-left">
+            <div class="expense-item-desc">${escHtml(e.desc || '—')}</div>
+            ${meta ? `<div class="expense-item-cat">${meta}</div>` : ''}
+          </div>
           <div class="expense-item-right">
             <div class="expense-item-date">${e.date}</div>
             <div class="expense-item-amount">−${formatEuro(e.amount)}</div>
+            ${dot}
             <button class="del-btn" onclick="deleteExpense(${i})">✕</button>
           </div>
         </div>`;
       }).join('');
     }
+
+    // Sync status line
+    const status = document.getElementById('syncStatus');
+    status.className = 'sync-status';
+    if (!settings.url) {
+      status.textContent = 'Sheet sync is off. Tap ⚙ SHEET SYNC to connect.';
+      status.classList.add('warn');
+    } else if (state.queue.length) {
+      status.textContent = `${state.queue.length} waiting to send to the sheet`;
+      status.classList.add('warn');
+    } else {
+      status.textContent = 'Everything is in the sheet';
+    }
+
+    // Spends added before the sync existed
+    const legacy = state.expenses.filter(e => !e.id);
+    const ln = document.getElementById('legacyNotice');
+    if (legacy.length && settings.url) {
+      document.getElementById('legacyText').textContent =
+        `${legacy.length} earlier spend${legacy.length !== 1 ? 's' : ''} this month aren't in the sheet yet. They'll arrive as "Uncategorised" for you to sort on the Spends tab.`;
+      ln.style.display = 'block';
+    } else {
+      ln.style.display = 'none';
+    }
   }
 
-  function escHtml(s) {
-    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  }
-
+  // ---------- actions ----------
   function setBalance() {
     const val = parseFloat(document.getElementById('balanceInput').value);
     if (isNaN(val) || val < 0) return;
@@ -550,32 +415,136 @@
     const desc = document.getElementById('descInput').value.trim();
     const amount = parseFloat(document.getElementById('amountInput').value);
     if (isNaN(amount) || amount <= 0) return;
+    const category = document.getElementById('categoryInput').value;
+    const paidWith = document.getElementById('paidInput').value;
 
-    const state = getState();
     const now = new Date();
-    const date = `${now.getDate().toString().padStart(2,'0')}/${(now.getMonth()+1).toString().padStart(2,'0')}`;
-    state.expenses.push({ desc, amount, date });
+    const e = {
+      id: makeId(), desc, amount, category, paidWith,
+      date: `${pad(now.getDate())}/${pad(now.getMonth() + 1)}`,
+      fullDate: `${pad(now.getDate())}/${pad(now.getMonth() + 1)}/${now.getFullYear()}`,
+      synced: false,
+    };
+    const state = getState();
+    state.expenses.push(e);
+    state.queue.push({ id: e.id, desc, amount, category, paidWith, fullDate: e.fullDate });
     saveState(state);
 
     document.getElementById('descInput').value = '';
     document.getElementById('amountInput').value = '';
     render();
+    syncPending();
   }
 
   function deleteExpense(index) {
     const state = getState();
+    const e = state.expenses[index];
+    if (e && e.synced && !confirm('This spend is already in your sheet. Remove it here only? (Delete it on the Spends tab too.)')) return;
+    if (e && e.id) state.queue = state.queue.filter(q => q.id !== e.id);
     state.expenses.splice(index, 1);
     saveState(state);
     render();
   }
 
-  // Allow Enter key on inputs
+  function sendLegacy() {
+    const state = getState();
+    const year = new Date().getFullYear();
+    state.expenses.forEach(e => {
+      if (e.id) return;
+      e.id = makeId();
+      e.category = 'Uncategorised';
+      e.synced = false;
+      e.fullDate = `${e.date}/${year}`;
+      state.queue.push({ id: e.id, desc: e.desc, amount: e.amount, category: e.category, paidWith: '', fullDate: e.fullDate });
+    });
+    saveState(state);
+    render();
+    syncPending();
+  }
+
+  // ---------- sync ----------
+  let syncing = false;
+  async function syncPending() {
+    const settings = getSettings();
+    if (syncing || !settings.url || !navigator.onLine) return;
+    syncing = true;
+    try {
+      let state = getState();
+      for (const item of [...state.queue]) {
+        const res = await fetch(settings.url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(Object.assign({ token: settings.token }, item)),
+        });
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.error || 'Sync failed');
+        state = getState();
+        state.queue = state.queue.filter(q => q.id !== item.id);
+        const e = state.expenses.find(x => x.id === item.id);
+        if (e) e.synced = true;
+        saveState(state);
+        render();
+      }
+    } catch (err) {
+      const status = document.getElementById('syncStatus');
+      status.textContent = 'Not sent yet (' + err.message + '). Will retry.';
+      status.className = 'sync-status warn';
+    } finally {
+      syncing = false;
+    }
+  }
+
+  // ---------- settings ----------
+  function toggleSettings() {
+    const card = document.getElementById('settingsCard');
+    card.classList.toggle('open');
+    if (card.classList.contains('open')) {
+      const s = getSettings();
+      document.getElementById('urlInput').value = s.url || '';
+      document.getElementById('tokenInput').value = s.token || '';
+      document.getElementById('budgetSetting').value = s.budget || '';
+      card.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+  function saveSettings() {
+    const s = {
+      url: document.getElementById('urlInput').value.trim(),
+      token: document.getElementById('tokenInput').value.trim(),
+      budget: parseFloat(document.getElementById('budgetSetting').value) || 0,
+    };
+    safeSet(SETTINGS_KEY, JSON.stringify(s));
+    document.getElementById('settingsMsg').textContent = 'Saved.';
+    render();
+    syncPending();
+  }
+  async function testConnection() {
+    const msg = document.getElementById('settingsMsg');
+    const url = document.getElementById('urlInput').value.trim();
+    const token = document.getElementById('tokenInput').value.trim();
+    if (!url) { msg.textContent = 'Add the web app link first.'; return; }
+    msg.textContent = 'Testing…';
+    try {
+      const res = await fetch(url + (url.includes('?') ? '&' : '?') + 'token=' + encodeURIComponent(token));
+      const data = await res.json();
+      msg.textContent = data.ok ? '✓ ' + data.message : '✕ ' + (data.message || 'Not connected');
+    } catch (err) {
+      msg.textContent = '✕ Could not reach the script. Check the link and that it is deployed for "Anyone".';
+    }
+  }
+
+  // ---------- start ----------
   document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('categoryInput').innerHTML = CATEGORIES.map(c => `<option>${escHtml(c)}</option>`).join('');
+    document.getElementById('paidInput').innerHTML = PAID_FROM.map(p => `<option>${escHtml(p)}</option>`).join('');
     document.getElementById('balanceInput').addEventListener('keydown', e => { if (e.key === 'Enter') setBalance(); });
     document.getElementById('amountInput').addEventListener('keydown', e => { if (e.key === 'Enter') addExpense(); });
     document.getElementById('descInput').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('amountInput').focus(); });
+    window.addEventListener('online', syncPending);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) syncPending(); });
     render();
+    syncPending();
   });
 </script>
+
 </body>
 </html>
