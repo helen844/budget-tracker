@@ -245,7 +245,10 @@
 
   // Must match the category names in the sheet's Setup tab.
   const CATEGORIES = ['Home', 'Joint (Sabadell)', 'Food', 'Transport', 'Health & fitness', 'Personal care',
-    'Going out', 'Shopping', 'Presents', 'Animals', 'Holidays', 'Other', 'Savings & investments', 'Transfer'];
+    'Going out', 'Shopping', 'Presents', 'Animals', 'Holidays', 'Other', 'Utilities', 'Business',
+    'Savings & investments', 'Transfer'];
+  // Tracked in the sheet but kept out of the personal budget.
+  const NOT_SPENDING = ['Savings & investments', 'Transfer', 'Utilities', 'Business'];
   const PAID_FROM = ['Revolut', 'Credit card', 'Caja Rural', 'Cash'];
 
   // ---------- storage ----------
@@ -313,7 +316,7 @@
   }
 
   // Only real spending counts against the budget.
-  function countsAsSpending(e) { return e.category !== 'Savings & investments' && e.category !== 'Transfer'; }
+  function countsAsSpending(e) { return NOT_SPENDING.indexOf(e.category) < 0; }
 
   // ---------- render ----------
   function render() {
