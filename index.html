@@ -133,6 +133,12 @@
   .sync-dot.wait { color: var(--amber); }
   .del-btn { background: none; color: var(--muted); font-size: 0.85rem; padding: 2px 6px; border-radius: 4px; border: 1px solid transparent; }
   .del-btn:hover { border-color: var(--border); color: var(--red); opacity: 1; }
+  .edit-btn { background: none; color: var(--muted); font-size: 0.85rem; padding: 2px 6px; border-radius: 4px; border: 1px solid transparent; }
+  .edit-btn:hover { border-color: var(--border); color: var(--accent); opacity: 1; }
+  .expense-item.editing { outline: 1px solid var(--accent); }
+  .form-buttons { display: flex; gap: 8px; }
+  .form-buttons button { flex: 1; }
+  .edit-note { font-size: 0.68rem; color: var(--amber); text-align: center; }
   .empty-state { font-size: 0.75rem; color: var(--muted); text-align: center; padding: 16px 0; }
 
   .sync-status { font-size: 0.65rem; color: var(--muted); margin-top: 12px; text-align: center; }
@@ -201,7 +207,7 @@
 <!-- ADD EXPENSE CARD -->
 <div class="card">
   <div class="card-header">
-    <div class="section-label" style="margin-bottom:0">Add Expense</div>
+    <div class="section-label" style="margin-bottom:0" id="formTitle">Add Expense</div>
     <div class="total-spent">Total spent<span id="totalSpent">€0,00</span></div>
   </div>
   <div class="expense-form">
@@ -211,7 +217,14 @@
       <select id="categoryInput"></select>
       <select id="paidInput"></select>
     </div>
-    <button onclick="addExpense()">ADD EXPENSE</button>
+    <div class="expense-row" id="dateRow" style="display:none">
+      <input type="date" id="dateInput" aria-label="Date">
+    </div>
+    <div class="edit-note" id="editNote" style="display:none"></div>
+    <div class="form-buttons">
+      <button id="saveBtn" onclick="saveExpense()">ADD EXPENSE</button>
+      <button id="cancelBtn" class="secondary" onclick="cancelEdit()" style="display:none">CANCEL</button>
+    </div>
   </div>
 </div>
 
@@ -361,7 +374,7 @@
           ? '<span class="sync-dot ok" title="In the sheet">✓</span>'
           : '<span class="sync-dot wait" title="Waiting to sync">•</span>';
         const meta = [e.category, e.paidWith].filter(Boolean).map(escHtml).join(' · ');
-        return `<div class="expense-item">
+        return `<div class="expense-item${editingId && editKey(e) === editingId ? ' editing' : ''}">
           <div class="expense-item-left">
             <div class="expense-item-desc">${escHtml(e.desc || '—')}</div>
             ${meta ? `<div class="expense-item-cat">${meta}</div>` : ''}
@@ -370,7 +383,8 @@
             <div class="expense-item-date">${e.date}</div>
             <div class="expense-item-amount">−${formatEuro(e.amount)}</div>
             ${dot}
-            <button class="del-btn" onclick="deleteExpense(${i})">✕</button>
+            <button class="edit-btn" onclick="startEdit(${i})" title="Edit">✎</button>
+            <button class="del-btn" onclick="deleteExpense(${i})" title="Delete">✕</button>
           </div>
         </div>`;
       }).join('');
@@ -439,6 +453,78 @@
     syncPending();
   }
 
+  // ---------- editing ----------
+  let editingId = null;   // key of the spend being edited, or null when adding
+  // Older spends have no id, so give them a local-only key for editing.
+  function editKey(e) { return e.id || e._lk; }
+
+  function saveExpense() { if (editingId) saveEdit(); else addExpense(); }
+
+  function startEdit(index) {
+    const state = getState();
+    const e = state.expenses[index];
+    if (!e) return;
+    if (!e.id && !e._lk) { e._lk = makeId(); saveState(state); }
+    editingId = editKey(e);
+    document.getElementById('descInput').value = e.desc || '';
+    document.getElementById('amountInput').value = e.amount;
+    document.getElementById('categoryInput').value = CATEGORIES.includes(e.category) ? e.category : CATEGORIES[0];
+    document.getElementById('paidInput').value = PAID_FROM.includes(e.paidWith) ? e.paidWith : PAID_FROM[0];
+    const year = new Date().getFullYear();
+    const [dd, mm, yy] = (e.fullDate || `${e.date}/${year}`).split('/');
+    document.getElementById('dateInput').value = `${yy}-${mm}-${dd}`;
+    document.getElementById('dateRow').style.display = 'flex';
+    document.getElementById('formTitle').textContent = 'Edit Expense';
+    document.getElementById('saveBtn').textContent = 'SAVE CHANGES';
+    document.getElementById('cancelBtn').style.display = 'block';
+    const note = document.getElementById('editNote');
+    note.textContent = e.synced ? 'Already in your sheet: change it on the Spends tab too.' : '';
+    note.style.display = e.synced ? 'block' : 'none';
+    render();
+    document.getElementById('descInput').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function cancelEdit() {
+    editingId = null;
+    document.getElementById('descInput').value = '';
+    document.getElementById('amountInput').value = '';
+    document.getElementById('dateRow').style.display = 'none';
+    document.getElementById('editNote').style.display = 'none';
+    document.getElementById('formTitle').textContent = 'Add Expense';
+    document.getElementById('saveBtn').textContent = 'ADD EXPENSE';
+    document.getElementById('cancelBtn').style.display = 'none';
+    render();
+  }
+
+  function saveEdit() {
+    const amount = parseFloat(document.getElementById('amountInput').value);
+    if (isNaN(amount) || amount <= 0) return;
+    const state = getState();
+    const e = state.expenses.find(x => editKey(x) === editingId);
+    if (!e) { cancelEdit(); return; }
+    e.desc = document.getElementById('descInput').value.trim();
+    e.amount = amount;
+    e.category = document.getElementById('categoryInput').value;
+    e.paidWith = document.getElementById('paidInput').value;
+    const d = document.getElementById('dateInput').value; // yyyy-mm-dd
+    if (d) {
+      const [yy, mm, dd] = d.split('-');
+      e.date = `${dd}/${mm}`;
+      e.fullDate = `${dd}/${mm}/${yy}`;
+    }
+    // Not sent yet: the corrected version is what goes to the sheet.
+    const q = e.id ? state.queue.find(x => x.id === e.id) : null;
+    if (q) Object.assign(q, { desc: e.desc, amount: e.amount, category: e.category, paidWith: e.paidWith, fullDate: e.fullDate });
+    saveState(state);
+    const wasSynced = e.synced;
+    cancelEdit();
+    if (wasSynced) {
+      const status = document.getElementById('syncStatus');
+      status.textContent = 'Changed here. Update the same spend on the Spends tab.';
+      status.className = 'sync-status warn';
+    }
+  }
+
   function deleteExpense(index) {
     const state = getState();
     const e = state.expenses[index];
@@ -446,7 +532,7 @@
     if (e && e.id) state.queue = state.queue.filter(q => q.id !== e.id);
     state.expenses.splice(index, 1);
     saveState(state);
-    render();
+    if (e && editKey(e) === editingId) cancelEdit(); else render();
   }
 
   function sendLegacy() {
@@ -540,7 +626,7 @@
     document.getElementById('categoryInput').innerHTML = CATEGORIES.map(c => `<option>${escHtml(c)}</option>`).join('');
     document.getElementById('paidInput').innerHTML = PAID_FROM.map(p => `<option>${escHtml(p)}</option>`).join('');
     document.getElementById('balanceInput').addEventListener('keydown', e => { if (e.key === 'Enter') setBalance(); });
-    document.getElementById('amountInput').addEventListener('keydown', e => { if (e.key === 'Enter') addExpense(); });
+    document.getElementById('amountInput').addEventListener('keydown', e => { if (e.key === 'Enter') saveExpense(); });
     document.getElementById('descInput').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('amountInput').focus(); });
     window.addEventListener('online', syncPending);
     document.addEventListener('visibilitychange', () => { if (!document.hidden) syncPending(); });
